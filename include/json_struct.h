@@ -124,6 +124,7 @@
 #include <string>
 #include <vector>
 #include <limits>
+#include <unordered_set>
 
 #ifdef _MSC_VER
 #include <intrin.h>
@@ -2557,6 +2558,8 @@ struct ParseContext
   bool allow_missing_members = true;
   bool allow_unnasigned_required_members = true;
   bool track_member_assignement_state = true;
+  std::unordered_set<std::string>* string_pool = nullptr;
+  std::string string_pool_temp_to_type;
 };
 
 /*! \def JS_MEMBER
@@ -4429,7 +4432,7 @@ static void handle_json_escapes_in(const DataRef &ref, std::string &to_type)
   }
 }
 
-static DataRef handle_json_escapes_out(const std::string &data, std::string &buffer)
+static DataRef handle_json_escapes_out(const std::string_view &data, std::string &buffer)
 {
   int start_index = 0;
   for (size_t i = 0; i < data.size(); i++)
@@ -8430,6 +8433,30 @@ struct TypeHandler<ArrayVariableContent<T, COUNT>>
     token.name = DataRef("");
     token.value_type = Type::ArrayEnd;
     token.value = DataRef("]");
+    serializer.write(token);
+  }
+};
+template <>
+struct TypeHandler<std::string_view>
+{
+  static inline Error to(std::string_view &to_type, ParseContext &context)
+  {
+    if (context.token.value_type == Type::Null)
+      return Error::NoError;
+    context.string_pool_temp_to_type.clear();
+    Internal::handle_json_escapes_in(context.token.value, context.string_pool_temp_to_type);
+    auto it = context.string_pool->insert(context.string_pool_temp_to_type);
+    to_type = *it.first;
+    return Error::NoError;
+  }
+
+  static inline void from(const std::string_view &str, Token &token, Serializer &serializer)
+  {
+    std::string buffer;
+    DataRef ref = Internal::handle_json_escapes_out(str, buffer);
+    token.value_type = Type::String;
+    token.value.data = ref.data;
+    token.value.size = ref.size;
     serializer.write(token);
   }
 };
