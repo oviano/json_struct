@@ -175,6 +175,20 @@
 #define JS JS
 #endif
 
+#ifdef __APPLE__
+#if defined(__clang__)
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wunused-parameter"
+#pragma clang diagnostic ignored "-Wshorten-64-to-32"
+#endif
+#elif defined(__ANDROID__)
+#if defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#pragma GCC diagnostic ignored "-Wsign-compare"
+#endif
+#endif
+
 namespace JS
 {
 /*!
@@ -8461,4 +8475,15 @@ struct TypeHandler<std::string_view>
   }
 };
 } // namespace JS
+
+#ifdef __APPLE__
+#if defined(__clang__)
+#pragma clang diagnostic pop
+#endif
+#elif defined(__ANDROID__)
+#if defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
+#endif
+
 #endif // JSON_STRUCT_H
