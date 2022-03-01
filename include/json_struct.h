@@ -4203,6 +4203,8 @@ namespace JS
 template <typename T>
 inline Error TypeHandler<T>::to(T &to_type, ParseContext &context)
 {
+  if (context.token.value_type == Type::Null)
+    return Error::NoError;
   if (context.token.value_type != JS::Type::ObjectStart)
     return Error::ExpectedObjectStart;
   Error error = context.tokenizer.nextToken(context.token);
@@ -4493,6 +4495,8 @@ struct TypeHandler<std::string>
 {
   static inline Error to(std::string &to_type, ParseContext &context)
   {
+    if (context.token.value_type == Type::Null)
+      return Error::NoError;
     to_type.clear();
     Internal::handle_json_escapes_in(context.token.value, to_type);
     return Error::NoError;
@@ -6695,6 +6699,8 @@ struct TypeHandler<double>
 {
   static inline Error to(double &to_type, ParseContext &context)
   {
+    if (context.token.value_type == Type::Null)
+      return Error::NoError;
     const char *pointer;
     auto result = Internal::ft::to_double(context.token.value.data, context.token.value.size, to_type, pointer);
     if (result != Internal::ft::parse_string_error::ok ||
@@ -6728,6 +6734,8 @@ struct TypeHandler<float>
 {
   static inline Error to(float &to_type, ParseContext &context)
   {
+    if (context.token.value_type == Type::Null)
+      return Error::NoError;
     const char *pointer;
     auto result = Internal::ft::to_float(context.token.value.data, context.token.value.size, to_type, pointer);
     if (result != Internal::ft::parse_string_error::ok ||
@@ -6759,6 +6767,8 @@ struct TypeHandler<int>
 {
   static inline Error to(int &to_type, ParseContext &context)
   {
+    if (context.token.value_type == Type::Null)
+      return Error::NoError;
     const char *pointer;
     auto parse_error =
       Internal::ft::integer::to_integer(context.token.value.data, context.token.value.size, to_type, pointer);
@@ -6792,6 +6802,8 @@ struct TypeHandler<uint32_t>
 public:
   static inline Error to(uint32_t &to_type, ParseContext &context)
   {
+    if (context.token.value_type == Type::Null)
+      return Error::NoError;
     const char *pointer;
     auto parse_error =
       Internal::ft::integer::to_integer(context.token.value.data, context.token.value.size, to_type, pointer);
@@ -6825,6 +6837,8 @@ struct TypeHandler<int64_t>
 public:
   static inline Error to(int64_t &to_type, ParseContext &context)
   {
+    if (context.token.value_type == Type::Null)
+      return Error::NoError;
     const char *pointer;
     auto parse_error =
       Internal::ft::integer::to_integer(context.token.value.data, context.token.value.size, to_type, pointer);
@@ -6858,6 +6872,8 @@ struct TypeHandler<uint64_t>
 public:
   static inline Error to(uint64_t &to_type, ParseContext &context)
   {
+    if (context.token.value_type == Type::Null)
+      return Error::NoError;
     const char *pointer;
     auto parse_error =
       Internal::ft::integer::to_integer(context.token.value.data, context.token.value.size, to_type, pointer);
@@ -6891,6 +6907,8 @@ struct TypeHandler<int16_t>
 public:
   static inline Error to(int16_t &to_type, ParseContext &context)
   {
+    if (context.token.value_type == Type::Null)
+      return Error::NoError;
     const char *pointer;
     auto parse_error =
       Internal::ft::integer::to_integer(context.token.value.data, context.token.value.size, to_type, pointer);
@@ -6924,6 +6942,8 @@ struct TypeHandler<uint16_t>
 public:
   static inline Error to(uint16_t &to_type, ParseContext &context)
   {
+    if (context.token.value_type == Type::Null)
+      return Error::NoError;
     const char *pointer;
     auto parse_error =
       Internal::ft::integer::to_integer(context.token.value.data, context.token.value.size, to_type, pointer);
@@ -6956,6 +6976,8 @@ struct TypeHandler<uint8_t>
 public:
   static inline Error to(uint8_t &to_type, ParseContext &context)
   {
+    if (context.token.value_type == Type::Null)
+      return Error::NoError;
     const char *pointer;
     auto parse_error =
       Internal::ft::integer::to_integer(context.token.value.data, context.token.value.size, to_type, pointer);
@@ -6988,6 +7010,8 @@ struct TypeHandler<int8_t>
 public:
   static inline Error to(int8_t &to_type, ParseContext &context)
   {
+    if (context.token.value_type == Type::Null)
+      return Error::NoError;
     const char *pointer;
     auto parse_error =
       Internal::ft::integer::to_integer(context.token.value.data, context.token.value.size, to_type, pointer);
@@ -7020,6 +7044,8 @@ struct TypeHandler<char>
 public:
   static inline Error to(char &to_type, ParseContext &context)
   {
+    if (context.token.value_type == Type::Null)
+      return Error::NoError;
     const char *pointer;
     auto parse_error =
       Internal::ft::integer::to_integer(context.token.value.data, context.token.value.size, to_type, pointer);
@@ -7222,6 +7248,8 @@ struct TypeHandler<bool>
 {
   static inline Error to(bool &to_type, ParseContext &context)
   {
+    if (context.token.value_type == Type::Null)
+      return Error::NoError;
     if (context.token.value.size == sizeof("true") - 1 &&
         memcmp("true", context.token.value.data, sizeof("true") - 1) == 0)
       to_type = true;
@@ -7258,6 +7286,8 @@ struct TypeHandler<std::vector<T>>
 public:
   static inline Error to(std::vector<T> &to_type, ParseContext &context)
   {
+    if (context.token.value_type == Type::Null)
+      return Error::NoError;
     if (context.token.value_type != JS::Type::ArrayStart)
       return Error::ExpectedArrayStart;
     Error error = context.nextToken();
