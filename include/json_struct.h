@@ -180,6 +180,7 @@
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wunused-parameter"
 #pragma clang diagnostic ignored "-Wshorten-64-to-32"
+#pragma clang diagnostic ignored "-Wsign-compare"
 #endif
 #elif defined(__ANDROID__)
 #if defined(__GNUC__)
@@ -4080,7 +4081,7 @@ struct DefaultCallFunctionContext : public CallFunctionContext
   SerializerContext s_context;
 
 protected:
-  void afterCallFunctions()
+  void afterCallFunctions() override
   {
     s_context.flush();
   }
